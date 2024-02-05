@@ -5,21 +5,32 @@ export const SET_IS_LOADING = 'SET_IS_LOADING'
 export const GET_STATES_SUCCESS = 'GET_STATES_SUCCESS'
 export const GET_STATES_FAILURE = 'GET_STATES_FAILURE'
 
-const baseStatesURL = 'https://datausa.io/api/data?drilldowns=State&measures=Population&year='
-const baseNationURL = 'https://datausa.io/api/data?drilldowns=Nation&measures=Population&year='
+let urls = [
+    'https://datausa.io/api/data?drilldowns=State&measures=Population&year=',
+    'https://datausa.io/api/data?drilldowns=Nation&measures=Population&year='
+]
 
 export const getStatesData = (year) => dispatch => {
     dispatch(setIsLoading(true))
     dispatch(getYear(year))
-    axios.get(`${baseStatesURL}${year}`)
-        .then(res => {
-            console.log(res)
-            dispatch(getStatesSuccess(res.data.data))
-        })
-        .catch(err => {
+    let tempArr = []
+    let usStateObj = {
+        usState: '',
+        us: ''
+    }
+    axios.all(urls.map(url => axios.get(`${url}${year}`)))
+        .then(responses => responses.forEach(resp => {
+            tempArr.push(resp.data.data)
+        }))
+        .catch(errors => errors.forEach(err => {
             console.log(err)
+        }))
+        .finally(() => {
+            usStateObj.usState = tempArr[0]
+            usStateObj.us = tempArr[1]
+            dispatch(getStatesSuccess(usStateObj))
+            dispatch(setIsLoading(false))
         })
-        .finally(() => dispatch(setIsLoading(false)))
 }
 
 export const getYear = year => 

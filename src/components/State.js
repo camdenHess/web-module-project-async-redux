@@ -2,10 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 
-const State = () => {
-    // if(loading) {
-    //     return <h2>Loading in population data...</h2>
-    // }
+const State = ({ stateData }) => {
 
     return (
         <>
@@ -18,4 +15,10 @@ const State = () => {
     )
 }
 
-export default State
+const mapStateToProps = state => {
+    return {
+        stateData: state.stateData
+    }
+}
+
+export default connect(mapStateToProps)(State)

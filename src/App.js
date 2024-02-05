@@ -6,7 +6,7 @@ import './App.css';
 
 let dropDownYears = ['--Select Year--' , 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021]
 
-const App = ({ getStatesData, year, loading, stateData }) => {
+const App = ({ getStatesData, year, loading, stateData, error }) => {
   return (
     <>
       <div className="App">
@@ -15,9 +15,13 @@ const App = ({ getStatesData, year, loading, stateData }) => {
 
       <div>
         {
-        loading ? <h3>Loading in state data...</h3>
-        : <h3>{year !== '--Select Year--' && !!year ? `${year} United States Population: `
-        : 'Select a Year to See Population Data'}</h3>
+          <h3>{error ? `Error: ${error}`: ''}</h3>
+        }
+
+        {
+          loading ? <h3>Loading in state data...</h3>
+          : <h3>{year !== '--Select Year--' && !!year ? `${year} United States Population: ${stateData.us[0].Population}`
+          : 'Select a Year to See Population Data'}</h3>
         }
         
         <label htmlFor='years'></label>
@@ -43,7 +47,8 @@ const mapStateToProps = state => {
   return {
     year: state.year,
     loading: state.loading,
-    stateData: state.stateData
+    stateData: state.stateData,
+    error: state.error
   }
 }
 
